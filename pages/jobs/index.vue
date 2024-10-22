@@ -12,16 +12,16 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted } from 'vue'
-import { storeToRefs } from 'pinia'
-import { useJobsStore } from '@/store/jobs'
-import JobList from '@/components/JobList.vue'
+import { onMounted } from 'vue';
+import { storeToRefs } from 'pinia';
+import { useJobsStore } from '@/store/jobs';
+import JobList from '@/components/JobList.vue';
 
-const jobsStore = useJobsStore()
+const jobsStore = useJobsStore();
 
-const { jobs, isLoading, error } = storeToRefs(jobsStore)
+const { jobs, isLoading, error } = storeToRefs(jobsStore);
 
 onMounted(() => {
-  jobsStore.fetchJobs()
-})
+  jobsStore.fetchJobs();
+});
 </script>

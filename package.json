@@ -4,6 +4,8 @@
   "type": "module",
   "homepage": "https://zahra77fth.github.io/jobList/",
   "scripts": {
+    "lint": "eslint .",
+    "format": "prettier --write .",
     "build": "nuxt build",
     "generate": "nuxt generate",
     "deploy": "pnpm generate && gh-pages -d dist",
@@ -23,8 +25,16 @@
     "vue-router": "latest"
   },
   "devDependencies": {
+    "@eslint/js": "^9.13.0",
     "@nuxtjs/tailwindcss": "^6.12.2",
+    "eslint": "^9.13.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.2.1",
+    "eslint-plugin-vue": "^9.29.1",
     "gh-pages": "^6.2.0",
-    "nuxt-icon": "1.0.0-beta.7"
+    "globals": "^15.11.0",
+    "nuxt-icon": "1.0.0-beta.7",
+    "prettier": "^3.3.3",
+    "typescript-eslint": "^8.11.0"
   }
 }

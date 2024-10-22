@@ -19,3 +19,4 @@ git clone https://github.com/zahra77fth/jobListingApp.git
 cd jobListingApp
 pnpm install
 pnpm run dev
+```
