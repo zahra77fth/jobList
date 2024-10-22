@@ -39,11 +39,7 @@ export const useJobsStore = defineStore('jobs', {
       }
     },
 
-    async applyFilters(
-      searchTerm: string,
-      location: string,
-      isRemote: boolean
-    ) {
+    async applyFilters(searchTerm: string, location: string, isRemote: boolean) {
       this.isLoading = true;
       this.jobs = [];
       this.currentPage = 1;
@@ -58,11 +54,11 @@ export const useJobsStore = defineStore('jobs', {
 
           const filteredJobs = items.filter((job: Job) => {
             const positionOrCompanyMatch =
-              job.position.toLowerCase().includes(searchTerm.toLowerCase()) ||
-              job.company.toLowerCase().includes(searchTerm.toLowerCase());
+                job.position.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                job.company.toLowerCase().includes(searchTerm.toLowerCase());
             const locationMatch = job.location
-              .toLowerCase()
-              .includes(location.toLowerCase());
+                .toLowerCase()
+                .includes(location.toLowerCase());
             const remoteMatch = !isRemote || job.contract === 'Part Time';
 
             return positionOrCompanyMatch && locationMatch && remoteMatch;
@@ -73,7 +69,7 @@ export const useJobsStore = defineStore('jobs', {
 
           this.currentPage++;
           this.hasMore =
-            this.currentPage <= Math.ceil(meta.total / meta.pageSize);
+              this.currentPage <= Math.ceil(meta.total / meta.pageSize);
 
           if (!this.hasMore) {
             this.jobs.push(...filteredJobs);
