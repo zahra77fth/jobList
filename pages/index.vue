@@ -1,6 +1,5 @@
 <template>
   <div class="mx-auto flex flex-col justify-between my-auto">
-    <!-- Filter Section -->
     <div
       class="flex flex-col md:flex-row justify-between items-center mx-4 md:py-4 space-x-4"
     >
@@ -33,20 +32,16 @@
       </div>
     </div>
 
-    <!-- Job List Section -->
     <div v-if="jobs.length">
       <JobList :jobs="jobs" />
     </div>
 
-    <!-- Loading Spinner -->
     <div v-if="isLoading" class="text-center my-4">
       <BaseSpinner />
     </div>
 
-    <!-- Error State -->
     <div v-else-if="error" class="text-center text-red-500">{{ error }}</div>
 
-    <!-- Load More Button -->
     <div v-else-if="hasMore && jobs.length" class="text-center my-4">
       <button
         @click="loadMore"
@@ -83,6 +78,9 @@ const applyFilters = () => {
 };
 
 const resetFilters = () => {
+  searchTerm.value = ''
+  location.value = '';
+  isRemote.value = false;
   jobsStore.resetFilters();
 };
 

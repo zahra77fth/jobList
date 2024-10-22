@@ -33,7 +33,7 @@ export const useJobsStore = defineStore('jobs', {
         this.currentPage = meta.page;
         this.hasMore = this.currentPage * meta.pageSize < meta.total;
       } catch (error) {
-        this.error = 'Failed to load jobs';
+        this.error = 'Failed to load jobList';
       } finally {
         this.isLoading = false;
       }

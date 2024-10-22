@@ -1,10 +1,7 @@
 <template>
   <div class="container mx-auto p-4">
-    <!-- Loader or error handling -->
     <div v-if="isLoading" class="text-center">Loading...</div>
     <div v-else-if="error" class="text-center text-red-500">{{ error }}</div>
-
-    <!-- Job list component -->
     <div v-else>
       <JobList :jobs="jobs" />
     </div>
