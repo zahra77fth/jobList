@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col justify-between md:h-[60vh] h-[55vh] min-h-[40vh]">
+  <div class="flex flex-col justify-between h-[calc(100vh-318px)] md:h-[calc(100vh-335px)] min-h-[40vh]">
     <div
       class="overflow-y-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-4 mx-4"
     >

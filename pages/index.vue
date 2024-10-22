@@ -32,6 +32,14 @@
 
     <div v-if="jobs.length">
       <JobList :jobs="jobs" />
+      <div v-if="hasMore" class="text-center my-4">
+        <button
+            @click="loadMore"
+            class="px-4 py-2 bg-blue-500 text-white rounded"
+        >
+          Load More
+        </button>
+      </div>
     </div>
 
     <div v-if="isLoading" class="text-center my-4">
@@ -39,15 +47,6 @@
     </div>
 
     <div v-else-if="error" class="text-center text-red-500">{{ error }}</div>
-
-    <div v-else-if="hasMore && jobs.length" class="text-center my-4">
-      <button
-          @click="loadMore"
-          class="px-4 py-2 bg-blue-500 text-white rounded"
-      >
-        Load More
-      </button>
-    </div>
   </div>
 </template>
 
