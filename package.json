@@ -4,7 +4,7 @@
   "type": "module",
   "homepage": "https://zahra77fth.github.io/jobList/",
   "scripts": {
-    "predeploy" : "npm run build",
+    "predeploy" : "pnpm run build",
     "deploy" : "gh-pages -d dist",
     "build": "nuxt build",
     "dev": "nuxt dev",
