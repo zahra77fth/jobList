@@ -2,7 +2,7 @@ import axios from 'axios'
 
 export default defineNuxtPlugin(() => {
     const api = axios.create({
-        baseURL: 'https://devjobs-api-eight.vercel.app/api/v1/',
+        baseURL: `${useRuntimeConfig().public.apiBaseUrl}`,
         timeout: 10000,
         headers: {
             'Content-Type': 'application/json',

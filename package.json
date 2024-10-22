@@ -4,11 +4,10 @@
   "type": "module",
   "homepage": "https://zahra77fth.github.io/jobList/",
   "scripts": {
-    "predeploy" : "pnpm run build",
-    "deploy" : "gh-pages -d dist",
     "build": "nuxt build",
-    "dev": "nuxt dev",
     "generate": "nuxt generate",
+    "deploy": "pnpm generate && gh-pages -d dist",
+    "dev": "nuxt dev",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare"
   },
