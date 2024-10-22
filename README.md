@@ -1,75 +1,21 @@
-# Nuxt Minimal Starter
+# Job Listing Application (Nuxt 3 + TypeScript + TailwindCSS)
 
-Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+This project demonstrates how to build a dynamic job listing application. Users can view available jobs, search for jobs by title or company, filter jobs by location or remote availability, and paginate through results. It uses Nuxt 3 with Vue 3's Composition API, TypeScript, Pinia for state management, and Axios for API requests.
 
-## Setup
+## Features
 
-Make sure to install dependencies:
+- **View Job Listings**: Fetch and display job listings with details such as title, company, and location.
+- **Search Jobs**: Users can search for jobs by company name or job title.
+- **Filter Jobs**: Filter job listings based on location, or toggle a checkbox to view only remote jobs.
+- **Load More**: Paginate through the list of jobs with a "Load More" button to fetch additional job data.
+- **Responsive Design**: Optimized for mobile and desktop using TailwindCSS.
+
+## Installation
+
+To set up the project locally, follow these steps:
 
 ```bash
-# npm
-npm install
-
-# pnpm
+git clone https://github.com/zahra77fth/jobListingApp.git
+cd jobListingApp
 pnpm install
-
-# yarn
-yarn install
-
-# bun
-bun install
-```
-
-## Development Server
-
-Start the development server on `http://localhost:3000`:
-
-```bash
-# npm
-npm run dev
-
-# pnpm
-pnpm dev
-
-# yarn
-yarn dev
-
-# bun
-bun run dev
-```
-
-## Production
-
-Build the application for production:
-
-```bash
-# npm
-npm run build
-
-# pnpm
-pnpm build
-
-# yarn
-yarn build
-
-# bun
-bun run build
-```
-
-Locally preview production build:
-
-```bash
-# npm
-npm run preview
-
-# pnpm
-pnpm preview
-
-# yarn
-yarn preview
-
-# bun
-bun run preview
-```
-
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+pnpm run dev
