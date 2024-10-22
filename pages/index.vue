@@ -1,0 +1,82 @@
+<template>
+  <div class="mx-auto flex flex-col justify-between my-auto">
+    <!-- Filter Section -->
+    <div class="flex flex-col md:flex-row justify-between items-center mx-4 md:py-4 space-x-4">
+      <input
+          v-model="searchTerm"
+          type="text"
+          placeholder="Company or job title"
+          class="border p-2 rounded w-full hover:border-secondary outline-primary"
+          @keyup.enter="applyFilters"
+      />
+      <input
+          v-model="location"
+          type="text"
+          placeholder="Location"
+          class="border p-2 rounded hidden md:block w-full hover:border-secondary outline-primary"
+          @keyup.enter="applyFilters"
+      />
+      <CheckBox
+          class-name="hidden md:flex"
+          v-model="isRemote"
+          label="Only PartTime"
+      />
+      <div class="flex gap-2 my-1">
+        <BaseButton @click="applyFilters" label="Search" />
+        <BaseButton @click="resetFilters" label="Reset Filters" variant="secondary" />
+      </div>
+    </div>
+
+    <!-- Job List Section -->
+    <div v-if="jobs.length">
+      <JobList :jobs="jobs" />
+    </div>
+
+    <!-- Loading Spinner -->
+    <div v-if="isLoading" class="text-center my-4">
+      <BaseSpinner />
+    </div>
+
+    <!-- Error State -->
+    <div v-else-if="error" class="text-center text-red-500">{{ error }}</div>
+
+    <!-- Load More Button -->
+    <div v-else-if="hasMore && jobs.length" class="text-center my-4">
+      <button @click="loadMore" class="px-4 py-2 bg-blue-500 text-white rounded">Load More</button>
+    </div>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref, onMounted } from 'vue';
+import { storeToRefs } from 'pinia';
+import { useJobsStore } from '@/store/jobs';
+import JobList from '@/components/JobList.vue';
+import BaseButton from "~/components/utills/Button.vue";
+import BaseSpinner from "~/components/utills/Spinner.vue";
+import CheckBox from "@/components/utills/CheckBox.vue";
+
+
+const jobsStore = useJobsStore();
+const { jobs, isLoading, error, hasMore } = storeToRefs(jobsStore);
+
+const searchTerm = ref('');
+const location = ref('');
+const isRemote = ref(false);
+
+onMounted(() => {
+  jobsStore.fetchJobs();
+});
+
+const applyFilters = () => {
+  jobsStore.applyFilters(searchTerm.value, location.value, isRemote.value);
+};
+
+const resetFilters = () => {
+  jobsStore.resetFilters();
+};
+
+const loadMore = () => {
+  jobsStore.loadMoreJobs();
+};
+</script>
