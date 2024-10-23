@@ -8,7 +8,7 @@
     "format": "prettier --write .",
     "build": "nuxt build",
     "generate": "nuxt generate",
-    "deploy": "pnpm generate && gh-pages -d dist",
+    "deploy": "nuxt generate --preset github_pages && gh-pages -d dist",
     "dev": "nuxt dev",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare"
