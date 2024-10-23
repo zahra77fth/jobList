@@ -2,14 +2,14 @@
   <div class="mx-auto flex flex-col justify-between my-auto">
     <div class="flex flex-col md:flex-row justify-between items-center mx-4 md:py-4 space-x-4">
       <input
-          v-model="searchTerm"
+          v-model="sanitizedSearchTerm"
           type="text"
           placeholder="Company or job title"
           class="border p-2 rounded w-full hover:border-secondary outline-primary"
           @keyup.enter="applyFilters"
       />
       <input
-          v-model="location"
+          v-model="sanitizedLocation"
           type="text"
           placeholder="Location"
           class="border p-2 rounded hidden md:block w-full hover:border-secondary outline-primary"
@@ -48,7 +48,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch } from 'vue';
+import { ref, computed, onMounted, watch } from 'vue';
 import { storeToRefs } from 'pinia';
 import { useRouter, useRoute } from 'vue-router';
 import { useJobsStore } from '@/store/jobs';
@@ -67,26 +67,40 @@ const searchTerm = ref('');
 const location = ref('');
 const fullTimeOnly = ref(false);
 
+const sanitizedSearchTerm = computed({
+  get: () => searchTerm.value,
+  set: (value) => {
+    searchTerm.value = value.replace(/\s+/g, ' ').trim();
+  },
+});
+
+const sanitizedLocation = computed({
+  get: () => location.value,
+  set: (value) => {
+    location.value = value.replace(/\s+/g, ' ').trim();
+  },
+});
+
 onMounted(() => {
   const query = route.query;
 
-  searchTerm.value = Array.isArray(query.searchTerm) ? query.searchTerm[0] || '' : (query.keyword ?? '').toString();
-  location.value = Array.isArray(query.location) ? query.location[0] || '' : (query.location ?? '').toString();
+  sanitizedSearchTerm.value = Array.isArray(query.searchTerm) ? query.searchTerm[0] || '' : (query.keyword ?? '').toString();
+  sanitizedLocation.value = Array.isArray(query.location) ? query.location[0] || '' : (query.location ?? '').toString();
   fullTimeOnly.value = query.fullTime === 'true';
 
-  jobsStore.fetchJobs(1, searchTerm.value, location.value, fullTimeOnly.value);
+  jobsStore.fetchJobs(1, sanitizedSearchTerm.value, sanitizedLocation.value, fullTimeOnly.value);
 });
 
 const applyFilters = debounce(() => {
   router.push({
     query: {
-      keyword: searchTerm.value || undefined,
-      location: location.value || undefined,
+      keyword: sanitizedSearchTerm.value || undefined,
+      location: sanitizedLocation.value || undefined,
       fullTime: fullTimeOnly.value ? 'true' : undefined,
     },
   });
 
-  jobsStore.applyFilters(searchTerm.value, location.value, fullTimeOnly.value);
+  jobsStore.applyFilters(sanitizedSearchTerm.value, sanitizedLocation.value, fullTimeOnly.value);
 }, 300);
 
 const resetFilters = () => {
@@ -105,10 +119,10 @@ const loadMore = () => {
 watch(route, (newRoute) => {
   const query = newRoute.query;
 
-  searchTerm.value = Array.isArray(query.keyword) ? query.keyword[0] || '' : (query.keyword ?? '').toString();
-  location.value = Array.isArray(query.location) ? query.location[0] || '' : (query.location ?? '').toString();
+  sanitizedSearchTerm.value = Array.isArray(query.keyword) ? query.keyword[0] || '' : (query.keyword ?? '').toString();
+  sanitizedLocation.value = Array.isArray(query.location) ? query.location[0] || '' : (query.location ?? '').toString();
   fullTimeOnly.value = query.fullTime === 'true';
 
-  jobsStore.applyFilters(searchTerm.value, location.value, fullTimeOnly.value);
+  jobsStore.applyFilters(sanitizedSearchTerm.value, sanitizedLocation.value, fullTimeOnly.value);
 });
 </script>
