@@ -40,6 +40,9 @@
     </div>
 
     <div v-else-if="error" class="text-center text-red-500">{{ error }}</div>
+    <div v-else-if="!isLoading && !jobs.length" class="text-center mt-16 text-gray-500">
+      <p>No results found.</p>
+    </div>
   </div>
 </template>
 
@@ -65,9 +68,11 @@ const isRemote = ref(false);
 
 onMounted(() => {
   const query = route.query;
-  searchTerm.value = Array.isArray(query.keyword) ? query.keyword[0] || '' : (query.keyword ?? '').toString();
+
+  searchTerm.value = Array.isArray(query.searchTerm) ? query.searchTerm[0] || '' : (query.keyword ?? '').toString();
   location.value = Array.isArray(query.location) ? query.location[0] || '' : (query.location ?? '').toString();
   isRemote.value = query.remote === 'true';
+
   jobsStore.fetchJobs(1, searchTerm.value, location.value, isRemote.value);
 });
 
@@ -79,6 +84,7 @@ const applyFilters = debounce(() => {
       remote: isRemote.value ? 'true' : undefined,
     },
   });
+
   jobsStore.applyFilters(searchTerm.value, location.value, isRemote.value);
 }, 300);
 
@@ -87,6 +93,7 @@ const resetFilters = () => {
   location.value = '';
   isRemote.value = false;
   router.push({ query: {} });
+
   jobsStore.resetFilters();
 };
 
@@ -96,9 +103,11 @@ const loadMore = () => {
 
 watch(route, (newRoute) => {
   const query = newRoute.query;
+
   searchTerm.value = Array.isArray(query.keyword) ? query.keyword[0] || '' : (query.keyword ?? '').toString();
   location.value = Array.isArray(query.location) ? query.location[0] || '' : (query.location ?? '').toString();
   isRemote.value = query.remote === 'true';
+
   jobsStore.applyFilters(searchTerm.value, location.value, isRemote.value);
 });
 </script>
