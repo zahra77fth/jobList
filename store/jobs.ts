@@ -13,7 +13,7 @@ export const useJobsStore = defineStore('jobs', {
     totalJobs: 0,
   }),
   actions: {
-    async fetchJobs(page = 1, searchTerm = '', location = '', isRemote = false) {
+    async fetchJobs(page = 1, searchTerm = '', location = '', fullTimeOnly = false) {
       this.isLoading = true;
       const { $api } = useNuxtApp();
 
@@ -22,7 +22,8 @@ export const useJobsStore = defineStore('jobs', {
         searchParams.append('page', page.toString());
         if (searchTerm) searchParams.append('keyword', searchTerm);
         if (location) searchParams.append('location', location);
-        if (isRemote) searchParams.append('remote', 'true');
+        if (fullTimeOnly) searchParams.append('fullTimeOnly', 'true'); // Change to match API
+
         const response = await $api.get(`jobs?${searchParams.toString()}`);
         const { items, meta } = response.data.result;
 
@@ -44,11 +45,11 @@ export const useJobsStore = defineStore('jobs', {
       }
     },
 
-    async applyFilters(searchTerm: string, location: string, isRemote: boolean) {
+    async applyFilters(searchTerm: string, location: string, fullTimeOnly: boolean) {
       this.jobs = [];
       this.currentPage = 1;
       this.hasMore = true;
-      await this.fetchJobs(1, searchTerm, location, isRemote);
+      await this.fetchJobs(1, searchTerm, location, fullTimeOnly);
     },
 
     resetFilters() {

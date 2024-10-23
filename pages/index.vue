@@ -17,8 +17,9 @@
       />
       <CheckBox
           class-name="hidden md:flex"
-          v-model="isRemote"
-          label="Only Part Time"
+          v-model="fullTimeOnly"
+          label="Only Full Time"
+          @click="applyFilters"
       />
       <div class="flex gap-2 my-1">
         <BaseButton @click="applyFilters" label="Search" />
@@ -64,16 +65,16 @@ const { jobs, isLoading, error, hasMore } = storeToRefs(jobsStore);
 
 const searchTerm = ref('');
 const location = ref('');
-const isRemote = ref(false);
+const fullTimeOnly = ref(false);
 
 onMounted(() => {
   const query = route.query;
 
   searchTerm.value = Array.isArray(query.searchTerm) ? query.searchTerm[0] || '' : (query.keyword ?? '').toString();
   location.value = Array.isArray(query.location) ? query.location[0] || '' : (query.location ?? '').toString();
-  isRemote.value = query.remote === 'true';
+  fullTimeOnly.value = query.fullTime === 'true';
 
-  jobsStore.fetchJobs(1, searchTerm.value, location.value, isRemote.value);
+  jobsStore.fetchJobs(1, searchTerm.value, location.value, fullTimeOnly.value);
 });
 
 const applyFilters = debounce(() => {
@@ -81,17 +82,17 @@ const applyFilters = debounce(() => {
     query: {
       keyword: searchTerm.value || undefined,
       location: location.value || undefined,
-      remote: isRemote.value ? 'true' : undefined,
+      fullTime: fullTimeOnly.value ? 'true' : undefined,
     },
   });
 
-  jobsStore.applyFilters(searchTerm.value, location.value, isRemote.value);
+  jobsStore.applyFilters(searchTerm.value, location.value, fullTimeOnly.value);
 }, 300);
 
 const resetFilters = () => {
   searchTerm.value = '';
   location.value = '';
-  isRemote.value = false;
+  fullTimeOnly.value = false;
   router.push({ query: {} });
 
   jobsStore.resetFilters();
@@ -106,8 +107,8 @@ watch(route, (newRoute) => {
 
   searchTerm.value = Array.isArray(query.keyword) ? query.keyword[0] || '' : (query.keyword ?? '').toString();
   location.value = Array.isArray(query.location) ? query.location[0] || '' : (query.location ?? '').toString();
-  isRemote.value = query.remote === 'true';
+  fullTimeOnly.value = query.fullTime === 'true';
 
-  jobsStore.applyFilters(searchTerm.value, location.value, isRemote.value);
+  jobsStore.applyFilters(searchTerm.value, location.value, fullTimeOnly.value);
 });
 </script>
