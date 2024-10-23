@@ -52,7 +52,6 @@ import { ref, computed, onMounted, watch } from 'vue';
 import { storeToRefs } from 'pinia';
 import { useRouter, useRoute } from 'vue-router';
 import { useJobsStore } from '@/store/jobs';
-import { debounce } from 'lodash';
 import JobList from '@/components/JobList.vue';
 import BaseButton from '~/components/utills/Button.vue';
 import BaseSpinner from '~/components/utills/Spinner.vue';
@@ -91,7 +90,7 @@ onMounted(() => {
   jobsStore.fetchJobs(1, sanitizedSearchTerm.value, sanitizedLocation.value, fullTimeOnly.value);
 });
 
-const applyFilters = debounce(() => {
+const applyFilters = () => {
   router.push({
     query: {
       keyword: sanitizedSearchTerm.value || undefined,
@@ -101,7 +100,7 @@ const applyFilters = debounce(() => {
   });
 
   jobsStore.applyFilters(sanitizedSearchTerm.value, sanitizedLocation.value, fullTimeOnly.value);
-}, 300);
+};
 
 const resetFilters = () => {
   searchTerm.value = '';
