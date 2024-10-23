@@ -22,21 +22,14 @@
       />
       <div class="flex gap-2 my-1">
         <BaseButton @click="applyFilters" label="Search" />
-        <BaseButton
-            @click="resetFilters"
-            label="Reset Filters"
-            variant="secondary"
-        />
+        <BaseButton @click="resetFilters" label="Reset Filters" variant="secondary" />
       </div>
     </div>
 
     <div v-if="jobs.length">
       <JobList :jobs="jobs" />
       <div v-if="hasMore" class="text-center my-4">
-        <button
-            @click="loadMore"
-            class="px-4 py-2 bg-blue-500 text-white rounded"
-        >
+        <button @click="loadMore" class="px-4 py-2 bg-blue-500 text-white rounded">
           Load More
         </button>
       </div>
@@ -51,16 +44,18 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, watch } from 'vue';
 import { storeToRefs } from 'pinia';
+import { useRouter, useRoute } from 'vue-router';
 import { useJobsStore } from '@/store/jobs';
-import { useRouter } from 'vue-router';
+import { debounce } from 'lodash';
 import JobList from '@/components/JobList.vue';
 import BaseButton from '~/components/utills/Button.vue';
 import BaseSpinner from '~/components/utills/Spinner.vue';
 import CheckBox from '@/components/utills/CheckBox.vue';
 
 const router = useRouter();
+const route = useRoute();
 const jobsStore = useJobsStore();
 const { jobs, isLoading, error, hasMore } = storeToRefs(jobsStore);
 
@@ -69,35 +64,41 @@ const location = ref('');
 const isRemote = ref(false);
 
 onMounted(() => {
-  const query = router.currentRoute.value.query;
-
-  searchTerm.value = query.search || '';
-  location.value = query.location || '';
-  isRemote.value = query.remote === 'true'; // Parse as boolean
-
-  jobsStore.fetchJobs();
+  const query = route.query;
+  searchTerm.value = Array.isArray(query.keyword) ? query.keyword[0] || '' : (query.keyword ?? '').toString();
+  location.value = Array.isArray(query.location) ? query.location[0] || '' : (query.location ?? '').toString();
+  isRemote.value = query.remote === 'true';
+  jobsStore.fetchJobs(1, searchTerm.value, location.value, isRemote.value);
 });
 
-const applyFilters = () => {
+const applyFilters = debounce(() => {
   router.push({
     query: {
-      search: searchTerm.value,
-      location: location.value,
-      remote: isRemote.value ? 'true' : 'false',
+      keyword: searchTerm.value || undefined,
+      location: location.value || undefined,
+      remote: isRemote.value ? 'true' : undefined,
     },
   });
-
   jobsStore.applyFilters(searchTerm.value, location.value, isRemote.value);
-};
+}, 300);
 
 const resetFilters = () => {
   searchTerm.value = '';
   location.value = '';
   isRemote.value = false;
+  router.push({ query: {} });
   jobsStore.resetFilters();
 };
 
 const loadMore = () => {
   jobsStore.loadMoreJobs();
 };
+
+watch(route, (newRoute) => {
+  const query = newRoute.query;
+  searchTerm.value = Array.isArray(query.keyword) ? query.keyword[0] || '' : (query.keyword ?? '').toString();
+  location.value = Array.isArray(query.location) ? query.location[0] || '' : (query.location ?? '').toString();
+  isRemote.value = query.remote === 'true';
+  jobsStore.applyFilters(searchTerm.value, location.value, isRemote.value);
+});
 </script>

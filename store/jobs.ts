@@ -13,12 +13,17 @@ export const useJobsStore = defineStore('jobs', {
     totalJobs: 0,
   }),
   actions: {
-    async fetchJobs(page = 1) {
+    async fetchJobs(page = 1, searchTerm = '', location = '', isRemote = false) {
       this.isLoading = true;
       const { $api } = useNuxtApp();
 
       try {
-        const response = await $api.get(`jobs?page=${page}`);
+        const searchParams = new URLSearchParams();
+        searchParams.append('page', page.toString());
+        if (searchTerm) searchParams.append('keyword', searchTerm);
+        if (location) searchParams.append('location', location);
+        if (isRemote) searchParams.append('remote', 'true');
+        const response = await $api.get(`jobs?${searchParams.toString()}`);
         const { items, meta } = response.data.result;
 
         if (page === 1) {
@@ -33,54 +38,17 @@ export const useJobsStore = defineStore('jobs', {
         this.currentPage = meta.page;
         this.hasMore = this.currentPage * meta.pageSize < meta.total;
       } catch (error) {
-        this.error = 'Failed to load jobList';
+        this.error = 'Failed to load job list';
       } finally {
         this.isLoading = false;
       }
     },
 
     async applyFilters(searchTerm: string, location: string, isRemote: boolean) {
-      this.isLoading = true;
       this.jobs = [];
       this.currentPage = 1;
       this.hasMore = true;
-      const { $api } = useNuxtApp();
-
-      try {
-        while (this.hasMore) {
-          console.log(`Fetching page ${this.currentPage}`);
-          const response = await $api.get(`jobs?page=${this.currentPage}`);
-          const { items, meta } = response.data.result;
-
-          const filteredJobs = items.filter((job: Job) => {
-            const positionOrCompanyMatch =
-                job.position.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                job.company.toLowerCase().includes(searchTerm.toLowerCase());
-            const locationMatch = job.location
-                .toLowerCase()
-                .includes(location.toLowerCase());
-            const remoteMatch = !isRemote || job.contract === 'Part Time';
-
-            return positionOrCompanyMatch && locationMatch && remoteMatch;
-          });
-
-          console.log(filteredJobs, 'before');
-          console.log(filteredJobs);
-
-          this.currentPage++;
-          this.hasMore =
-              this.currentPage <= Math.ceil(meta.total / meta.pageSize);
-
-          if (!this.hasMore) {
-            this.jobs.push(...filteredJobs);
-            break;
-          }
-        }
-      } catch (error) {
-        this.error = 'Failed to apply filters';
-      } finally {
-        this.isLoading = false;
-      }
+      await this.fetchJobs(1, searchTerm, location, isRemote);
     },
 
     resetFilters() {
